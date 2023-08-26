@@ -1,11 +1,26 @@
 import React, { Component } from 'react';
 import { Wrapper } from './App.styled';
+import Contact from '../Contact/Contact';
+import GlobalStyles from '../GlobalStyles/GlobalStyles';
 
 class App extends Component {
-  render() {
-    return (<Wrapper>
+  state = {
+    contacts: [],
+    name: '',
+  };
 
-    </Wrapper>);
+  render() {
+    return (<>
+      <Wrapper>
+        <ul>
+          <li>
+            <Contact fullName='John Jackson' />
+          </li>
+        </ul>
+      </Wrapper>
+
+      <GlobalStyles />
+    </>);
   }
 }
 
