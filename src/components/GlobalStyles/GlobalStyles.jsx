@@ -16,13 +16,6 @@ export default function GlobalStyles() {
       monospace;
     }
 
-    ul, ol {
-      margin: 0;
-      padding: 0;
-
-      // list-style: none;
-    }
-
     p {
       font-size: 18px;
     }
