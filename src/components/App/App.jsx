@@ -10,12 +10,18 @@ class App extends Component {
   state = {
     contacts: [],
     name: '',
+    phone: '',
   };
 
   handleChange = (event) => {
-    const { currentTarget: { value: newName } } = event;
+    const {
+      currentTarget: {
+        value,
+        name,
+      },
+    } = event;
 
-    this.updateName(newName);
+    this.setState({ [name]: value });
   };
 
   handleSubmit = (event) => {
@@ -29,59 +35,103 @@ class App extends Component {
       return;
     }
 
-    this.resetName();
+    this.resetFormInfo();
   };
 
-  updateName = (name) => {
-    this.setState({ name });
-  };
-
-  // Returns false if an error has occurred
-  // Possible errors:
-  // 1. Empty name
-  // 2. Contact duplicate
+  /**
+   * Returns false if an error has occurred
+   *
+   * Possible errors:
+   * 1. Empty name
+   * 2. Contact duplicate
+   * 3. Phone is empty
+   * 4. Regular expression test has failed
+   *
+   * RegExp rules: 0-9, +, ', -
+   */
   addContact = () => {
     const {
       contacts,
       name,
+      phone,
     } = this.state;
 
-    if (!name) {
+    if (!isNameValid()) {
       return false;
     }
 
-    if (contacts.includes(name)) {
+    if (!isPhoneValid()) {
       return false;
     }
 
     // Add a non-empty unique contact
-    this.setState((state) => {
+    this.setState((prevState) => {
       return {
         contacts: [
-          ...state.contacts,
-          state.name,
+          ...prevState.contacts,
+          {
+            name: prevState.name,
+            phone: prevState.phone,
+          },
         ],
       };
     });
 
     return true;
+
+    function isNameValid() {
+      if (!name) {
+        toast.error('Provide a name');
+        return false;
+      }
+
+      if (contacts.includes(name)) {
+        toast.error('Choose a unique name');
+        return false;
+      }
+
+      return true;
+    }
+
+    function isPhoneValid() {
+      if (!phone) {
+        toast.error('Provide a phone');
+        return false;
+      }
+
+      const regExp = new RegExp('^[0-9 \-\'+]+$');
+
+      const isPhoneAValidNumber = regExp.test(phone);
+
+      if (!isPhoneAValidNumber) {
+        toast.error(
+          'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +');
+        return false;
+      }
+
+      return true;
+    }
   };
 
-  resetName = () => {
-    this.setState({ name: '' });
-
+  resetFormInfo = () => {
+    this.setState({
+      name: '',
+      phone: '',
+    });
   };
 
   render() {
     const {
       contacts,
       name,
+      phone,
     } = this.state;
 
     return (<>
       <Wrapper>
         <Section title='Phonebook'>
           <Form name={name}
+                phone={phone}
                 onChange={this.handleChange}
                 onSubmit={this.handleSubmit} />
         </Section>

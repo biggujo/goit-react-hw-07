@@ -4,8 +4,11 @@ import { nanoid } from 'nanoid';
 
 export default function ContactList({ contacts }) {
   return (<ul>
-    {contacts.map((contact) => <li key={nanoid()}>
-      <ContactItem fullName={contact} />
+    {contacts.map(({
+      name,
+      phone,
+    }) => <li key={nanoid()}>
+      <ContactItem fullName={name} phone={phone} />
     </li>)}
   </ul>);
 }
