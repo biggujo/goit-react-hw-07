@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Wrapper } from './App.styled';
 import GlobalStyles from '../GlobalStyles/GlobalStyles';
 import Section from '../Section/Section';
-import Form from '../Form/Form';
+import ContactForm from '../Form/ContactForm';
 import ContactList from '../ContactList/ContactList';
 import { toast, Toaster } from 'react-hot-toast';
 import Filter from '../Filter/Filter';
@@ -32,11 +32,9 @@ class App extends Component {
       },
     ],
     filter: '',
-    name: '',
-    phone: '',
   };
 
-  handleInputChange = ({
+  handleChange = ({
     currentTarget: {
       value,
       name,
@@ -45,18 +43,9 @@ class App extends Component {
     this.setState({ [name]: value });
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    const hasContactAddSucceeded = this.addContact();
-
-    if (!hasContactAddSucceeded) {
-      toast.error(
-        'The contact is either empty or non-unique. Please, try again.');
-      return;
-    }
-
-    this.resetFormInfo();
+  // Return true if success, otherwise return false
+  handleSubmit = (contact) => {
+    return this.addContact(contact);
   };
 
   /**
@@ -70,11 +59,12 @@ class App extends Component {
    *
    * RegExp rules: 0-9, +, ', -
    */
-  addContact = () => {
+  addContact = ({
+    name,
+    phone,
+  }) => {
     const {
       contacts,
-      name,
-      phone,
     } = this.state;
 
     if (!isNameValid()) {
@@ -90,8 +80,8 @@ class App extends Component {
       return {
         contacts: [
           {
-            name: prevState.name,
-            phone: prevState.phone,
+            name,
+            phone,
           },
           ...prevState.contacts,
         ],
@@ -106,7 +96,7 @@ class App extends Component {
         return false;
       }
 
-      if (contacts.includes(name)) {
+      if (contacts.find(({ name: contactName }) => contactName === name)) {
         toast.error('Choose a unique name');
         return false;
       }
@@ -120,7 +110,7 @@ class App extends Component {
         return false;
       }
 
-      const regExp = new RegExp('^[0-9 \-\'+]+$');
+      const regExp = new RegExp('^[0-9 -\'+]+$');
 
       const isPhoneAValidNumber = regExp.test(phone);
 
@@ -147,19 +137,9 @@ class App extends Component {
     });
   };
 
-  resetFormInfo = () => {
-    this.setState({
-      name: '',
-      phone: '',
-    });
-  };
-
   render() {
     const {
-      contacts,
       filter,
-      name,
-      phone,
     } = this.state;
 
     const visibleContacts = this.getFilteredContactsByName();
@@ -167,15 +147,13 @@ class App extends Component {
     return (<>
       <Wrapper>
         <Section title='Phonebook'>
-          <Form name={name}
-                phone={phone}
-                onChange={this.handleInputChange}
-                onSubmit={this.handleSubmit} />
+          <ContactForm
+            onSubmit={this.handleSubmit} />
         </Section>
         <Section title='Contacts'>
           <Filter label='Find contacts by name'
                   value={filter}
-                  onChange={this.handleInputChange} />
+                  onChange={this.handleChange} />
           <ContactList contacts={visibleContacts}></ContactList>
         </Section>
       </Wrapper>
