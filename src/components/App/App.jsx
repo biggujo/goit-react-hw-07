@@ -5,6 +5,7 @@ import Section from '../Section/Section';
 import Form from '../Form/Form';
 import ContactList from '../ContactList/ContactList';
 import { toast, Toaster } from 'react-hot-toast';
+import Filter from '../Filter/Filter';
 
 class App extends Component {
   state = {
@@ -30,18 +31,17 @@ class App extends Component {
         phone: '227-91-26',
       },
     ],
+    filter: '',
     name: '',
     phone: '',
   };
 
-  handleChange = (event) => {
-    const {
-      currentTarget: {
-        value,
-        name,
-      },
-    } = event;
-
+  handleInputChange = ({
+    currentTarget: {
+      value,
+      name,
+    },
+  }) => {
     this.setState({ [name]: value });
   };
 
@@ -134,6 +134,19 @@ class App extends Component {
     }
   };
 
+  getFilteredContactsByName = () => {
+    const {
+      contacts,
+      filter,
+    } = this.state;
+
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter(({ name }) => {
+      return name.toLowerCase().includes(normalizedFilter);
+    });
+  };
+
   resetFormInfo = () => {
     this.setState({
       name: '',
@@ -144,20 +157,26 @@ class App extends Component {
   render() {
     const {
       contacts,
+      filter,
       name,
       phone,
     } = this.state;
+
+    const visibleContacts = this.getFilteredContactsByName();
 
     return (<>
       <Wrapper>
         <Section title='Phonebook'>
           <Form name={name}
                 phone={phone}
-                onChange={this.handleChange}
+                onChange={this.handleInputChange}
                 onSubmit={this.handleSubmit} />
         </Section>
         <Section title='Contacts'>
-          <ContactList contacts={contacts}></ContactList>
+          <Filter label='Find contacts by name'
+                  value={filter}
+                  onChange={this.handleInputChange} />
+          <ContactList contacts={visibleContacts}></ContactList>
         </Section>
       </Wrapper>
 
