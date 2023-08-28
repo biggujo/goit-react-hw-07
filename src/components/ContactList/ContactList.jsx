@@ -1,6 +1,5 @@
 import React from 'react';
 import ContactItem from '../ContactItem';
-import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 
 export default function ContactList({
