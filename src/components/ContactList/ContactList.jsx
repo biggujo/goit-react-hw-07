@@ -1,6 +1,7 @@
 import React from 'react';
 import ContactItem from '../ContactItem';
 import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
 
 export default function ContactList({
   contacts,
@@ -11,7 +12,7 @@ export default function ContactList({
       id,
       name,
       phone,
-    }) => <li key={nanoid()}>
+    }) => <li key={id}>
       <ContactItem id={id}
                    fullName={name}
                    phone={phone}
@@ -19,3 +20,11 @@ export default function ContactList({
     </li>)}
   </ul>);
 }
+
+ContactList.propTypes = {
+  contacts: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+  })).isRequired,
+};
