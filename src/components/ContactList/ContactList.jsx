@@ -1,5 +1,5 @@
 import React from 'react';
-import ContactItem from '../ContactItem/ContactItem';
+import ContactItem from '../ContactItem';
 import { nanoid } from 'nanoid';
 
 export default function ContactList({

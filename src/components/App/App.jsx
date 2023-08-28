@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+
 import { Wrapper } from './App.styled';
-import GlobalStyles from '../GlobalStyles/GlobalStyles';
-import Section from '../Section/Section';
-import ContactForm from '../Form/ContactForm';
-import ContactList from '../ContactList/ContactList';
+
+import GlobalStyles from '../GlobalStyles';
+import Section from '../Section';
+import ContactForm from '../ContactForm';
+import ContactList from '../ContactList';
+import Filter from '../Filter';
+
 import { toast, Toaster } from 'react-hot-toast';
-import Filter from '../Filter/Filter';
 import { nanoid } from 'nanoid';
 
 class App extends Component {
