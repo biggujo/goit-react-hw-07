@@ -4,7 +4,7 @@ export const Label = styled.label`
   font-size: 24px;
 `;
 
-export const FormStyled = styled.form`
+export const ContactFormStyled = styled.form`
   display: flex;
   flex-direction: column;
   align-items: flex-start;

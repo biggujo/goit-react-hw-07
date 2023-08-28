@@ -6,6 +6,7 @@ import ContactForm from '../Form/ContactForm';
 import ContactList from '../ContactList/ContactList';
 import { toast, Toaster } from 'react-hot-toast';
 import Filter from '../Filter/Filter';
+import { nanoid } from 'nanoid';
 
 class App extends Component {
   state = {
@@ -43,6 +44,17 @@ class App extends Component {
     this.setState({ [name]: value });
   };
 
+  handleContactDeleteById = (id) => {
+    this.setState((prevState) => {
+      return {
+        contacts: prevState.contacts.filter(({ id: contactId }) => {
+          return contactId !== id;
+        }),
+      };
+    });
+
+  };
+
   // Return true if success, otherwise return false
   handleSubmit = (contact) => {
     return this.addContact(contact);
@@ -53,7 +65,7 @@ class App extends Component {
    *
    * Possible errors:
    * 1. Empty name
-   * 2. Contact duplicate
+   * 2. ContactItem duplicate
    * 3. Phone is empty
    * 4. Regular expression test has failed
    *
@@ -80,6 +92,7 @@ class App extends Component {
       return {
         contacts: [
           {
+            id: nanoid(),
             name,
             phone,
           },
@@ -154,7 +167,8 @@ class App extends Component {
           <Filter label='Find contacts by name'
                   value={filter}
                   onChange={this.handleChange} />
-          <ContactList contacts={visibleContacts}></ContactList>
+          <ContactList contacts={visibleContacts}
+                       onDelete={this.handleContactDeleteById}></ContactList>
         </Section>
       </Wrapper>
 
