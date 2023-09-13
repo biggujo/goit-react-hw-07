@@ -11,6 +11,8 @@ import Filter from '../Filter';
 import { toast, Toaster } from 'react-hot-toast';
 import { nanoid } from 'nanoid';
 
+const LS_KEY = 'contacts';
+
 class App extends Component {
   state = {
     contacts: [
@@ -37,6 +39,36 @@ class App extends Component {
     ],
     filter: '',
   };
+
+  componentDidMount() {
+    try {
+      const stringifiedContacts = localStorage.getItem(LS_KEY);
+
+      const parsedContacts = JSON.parse(stringifiedContacts);
+
+      this.setState({ contacts: parsedContacts });
+
+    } catch {
+      toast.error(`Error reading "${LS_KEY}" from the local storage`);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { contacts: prevContacts } = prevState;
+    const { contacts: nextContacts } = this.state;
+
+    if (prevContacts.length === nextContacts.length) {
+      return;
+    }
+
+    try {
+      const stringifiedContacts = JSON.stringify(nextContacts);
+
+      localStorage.setItem(LS_KEY, stringifiedContacts);
+    } catch {
+      toast.error(`Error writing "${LS_KEY}" to the local storage`);
+    }
+  }
 
   handleChange = ({
     currentTarget: {
@@ -155,6 +187,7 @@ class App extends Component {
 
   render() {
     const {
+      contacts,
       filter,
     } = this.state;
 
@@ -169,9 +202,12 @@ class App extends Component {
         <Section title='Contacts'>
           <Filter label='Find contacts by name'
                   value={filter}
-                  onChange={this.handleChange} />
-          <ContactList contacts={visibleContacts}
-                       onDelete={this.handleContactDeleteById}></ContactList>
+                  onChange={this.handleChange}
+                  isDisabled={contacts.length === 0} />
+
+          {contacts.length > 0 ? <ContactList contacts={visibleContacts}
+                                              onDelete={this.handleContactDeleteById} /> :
+            <p>Please, add a contact to get started.</p>}
         </Section>
       </Wrapper>
 

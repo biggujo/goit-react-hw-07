@@ -6,6 +6,7 @@ import { Input, Label, Wrapper } from './Filter.styled';
 export default function Filter({
   label,
   value,
+  isDisabled,
   onChange,
 }) {
   const filterInputId = nanoid();
@@ -15,6 +16,7 @@ export default function Filter({
            id={filterInputId}
            name='filter'
            value={value}
+           disabled={isDisabled}
            onChange={onChange} />
   </Wrapper>);
 }
@@ -22,5 +24,6 @@ export default function Filter({
 Filter.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
+  isDisabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
 };
