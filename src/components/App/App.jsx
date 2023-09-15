@@ -46,6 +46,10 @@ class App extends Component {
 
       const parsedContacts = JSON.parse(stringifiedContacts);
 
+      if (parsedContacts === null) {
+        return;
+      }
+
       this.setState({ contacts: parsedContacts });
 
     } catch {
