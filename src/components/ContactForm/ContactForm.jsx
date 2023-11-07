@@ -1,75 +1,72 @@
-import React, { Component } from 'react';
-import { Button, ContactFormStyled, Input, Label } from './ContactForm.styled';
-import PropTypes from 'prop-types';
+import React, { useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
+import { Button, ContactFormStyled, Input, Label } from './ContactForm.styled';
 
-export default class ContactForm extends Component {
-  constructor(props) {
-    super(props);
+export default function ContactForm({ onSubmit }) {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
 
-    this.state = {
-      name: '',
-      phone: '',
-    };
+  const nameInputId = useRef(nanoid());
+  const phoneInputId = useRef(nanoid());
 
-    this.nameInputId = nanoid();
-    this.phoneInputId = nanoid();
-  }
+  const handleInputChange = ({
+                               currentTarget: {
+                                 value,
+                                 name,
+                               },
+                             }) => {
+    switch (name) {
+      case 'name':
+        setName(value);
+        return;
 
-  handleInputChange = ({
-    currentTarget: {
-      value,
-      name,
-    },
-  }) => {
-    this.setState({ [name]: value });
-  };
+      case 'phone':
+        setPhone(value);
+        return;
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    const isSubmitSuccessful = this.props.onSubmit(this.state);
-
-    if (isSubmitSuccessful) {
-      this.resetFormInfo();
+      default:
+        return;
     }
   };
 
-  resetFormInfo = () => {
-    this.setState({
-      name: '',
-      phone: '',
-    });
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    console.log(event);
+
+    const isSubmitSuccessful = onSubmit(Object.fromEntries(new FormData(event.target).entries()));
+
+    if (isSubmitSuccessful) {
+      resetFormInfo();
+    }
   };
 
-  render() {
-    const {
-      name,
-      phone,
-    } = this.state;
+  const resetFormInfo = () => {
+    setName('');
+    setPhone('');
+  };
 
-    return <ContactFormStyled onSubmit={this.handleSubmit}>
-      <Label htmlFor={this.nameInputId}>Name</Label>
-      <Input type='text'
-             id={this.nameInputId}
-             name='name'
-             value={name}
-             onChange={this.handleInputChange}
-             required />
+  return <ContactFormStyled onSubmit={handleSubmit}>
+    <Label htmlFor={nameInputId.current}>Name</Label>
+    <Input type='text'
+           id={nameInputId.current}
+           name='name'
+           value={name}
+           onChange={handleInputChange}
+           required />
 
-      <Label htmlFor={this.phoneInputId}>Phone</Label>
-      <Input type='tel'
-             id={this.phoneInputId}
-             name='phone'
-             value={phone}
-             onChange={this.handleInputChange}
-             title='Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
-             required />
-      <Button type='submit'>Add contact</Button>
-    </ContactFormStyled>;
-  }
+    <Label htmlFor={phoneInputId.current}>Phone</Label>
+    <Input type='tel'
+           id={phoneInputId.current}
+           name='phone'
+           value={phone}
+           onChange={handleInputChange}
+           title='Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
+           required />
+    <Button type='submit'>Add contact</Button>
+  </ContactFormStyled>;
 }
-
 ContactForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };

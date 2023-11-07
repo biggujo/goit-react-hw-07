@@ -1,102 +1,59 @@
-import React, { Component } from 'react';
-
+import React, { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { Wrapper } from './App.styled';
-
-import GlobalStyles from '../GlobalStyles';
 import Section from '../Section';
 import ContactForm from '../ContactForm';
-import ContactList from '../ContactList';
 import Filter from '../Filter';
-
-import { toast, Toaster } from 'react-hot-toast';
+import ContactList from '../ContactList';
+import GlobalStyles from '../GlobalStyles';
 import { nanoid } from 'nanoid';
+import { useLocalStorage } from '../../hooks';
 
 const LS_KEY = 'contacts';
 
-class App extends Component {
-  state = {
-    contacts: [
-      {
-        id: 'id-1',
-        name: 'Rosie Simpson',
-        phone: '459-12-56',
-      },
-      {
-        id: 'id-2',
-        name: 'Hermione Kline',
-        phone: '443-89-12',
-      },
-      {
-        id: 'id-3',
-        name: 'Eden Clements',
-        phone: '645-17-79',
-      },
-      {
-        id: 'id-4',
-        name: 'Annie Copeland',
-        phone: '227-91-26',
-      },
-    ],
-    filter: '',
-  };
-
-  componentDidMount() {
-    try {
-      const stringifiedContacts = localStorage.getItem(LS_KEY);
-
-      const parsedContacts = JSON.parse(stringifiedContacts);
-
-      if (parsedContacts === null) {
-        return;
-      }
-
-      this.setState({ contacts: parsedContacts });
-
-    } catch {
-      toast.error(`Error reading "${LS_KEY}" from the local storage`);
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { contacts: prevContacts } = prevState;
-    const { contacts: nextContacts } = this.state;
-
-    if (prevContacts.length === nextContacts.length) {
-      return;
-    }
-
-    try {
-      const stringifiedContacts = JSON.stringify(nextContacts);
-
-      localStorage.setItem(LS_KEY, stringifiedContacts);
-    } catch {
-      toast.error(`Error writing "${LS_KEY}" to the local storage`);
-    }
-  }
-
-  handleChange = ({
-    currentTarget: {
-      value,
-      name,
+export default function App() {
+  const [contacts, setContacts] = useLocalStorage(LS_KEY, [
+    {
+      id: 'id-1',
+      name: 'Rosie Simpson',
+      phone: '459-12-56',
     },
-  }) => {
-    this.setState({ [name]: value });
+    {
+      id: 'id-2',
+      name: 'Hermione Kline',
+      phone: '443-89-12',
+    },
+    {
+      id: 'id-3',
+      name: 'Eden Clements',
+      phone: '645-17-79',
+    },
+    {
+      id: 'id-4',
+      name: 'Annie Copeland',
+      phone: '227-91-26',
+    },
+  ]);
+
+  const [filter, setFilter] = useState('');
+
+  const handleFilterChange = ({
+                                currentTarget: {
+                                  value,
+                                },
+                              }) => {
+    setFilter(value);
   };
 
-  handleContactDeleteById = (id) => {
-    this.setState((prevState) => {
-      return {
-        contacts: prevState.contacts.filter(({ id: contactId }) => {
-          return contactId !== id;
-        }),
-      };
-    });
-
+  const handleContactDeleteById = (id) => {
+    setContacts(prevState => prevState.filter(({ id: contactId }) => {
+      return contactId !== id;
+    }));
   };
 
   // Return true if success, otherwise return false
-  handleSubmit = (contact) => {
-    return this.addContact(contact);
+  const handleSubmit = (contact) => {
+    return addContact(contact);
   };
 
   /**
@@ -110,14 +67,10 @@ class App extends Component {
    *
    * RegExp rules: 0-9, +, ', -
    */
-  addContact = ({
-    name,
-    phone,
-  }) => {
-    const {
-      contacts,
-    } = this.state;
-
+  const addContact = ({
+                        name,
+                        phone,
+                      }) => {
     if (!isNameValid()) {
       return false;
     }
@@ -127,18 +80,14 @@ class App extends Component {
     }
 
     // Add a non-empty unique contact
-    this.setState((prevState) => {
-      return {
-        contacts: [
-          {
-            id: nanoid(),
-            name,
-            phone,
-          },
-          ...prevState.contacts,
-        ],
-      };
-    });
+    setContacts(prevState => [
+      {
+        id: nanoid(),
+        name,
+        phone,
+      },
+      ...prevState,
+    ]);
 
     return true;
 
@@ -176,12 +125,7 @@ class App extends Component {
     }
   };
 
-  getFilteredContactsByName = () => {
-    const {
-      contacts,
-      filter,
-    } = this.state;
-
+  const getFilteredContactsByName = () => {
     const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(({ name }) => {
@@ -189,36 +133,23 @@ class App extends Component {
     });
   };
 
-  render() {
-    const {
-      contacts,
-      filter,
-    } = this.state;
-
-    const visibleContacts = this.getFilteredContactsByName();
-
-    return (<>
-      <Wrapper>
-        <Section title='Phonebook'>
-          <ContactForm
-            onSubmit={this.handleSubmit} />
-        </Section>
-        <Section title='Contacts'>
-          <Filter label='Find contacts by name'
-                  value={filter}
-                  onChange={this.handleChange}
-                  isDisabled={contacts.length === 0} />
-
-          {contacts.length > 0 ? <ContactList contacts={visibleContacts}
-                                              onDelete={this.handleContactDeleteById} /> :
-            <p>Please, add a contact to get started.</p>}
-        </Section>
-      </Wrapper>
-
-      <Toaster position='top-right' />
-      <GlobalStyles />
-    </>);
-  }
+  return (<>
+    <Wrapper>
+      <Section title='Phonebook'>
+        <ContactForm
+          onSubmit={handleSubmit} />
+      </Section>
+      <Section title='Contacts'>
+        <Filter label='Find contacts by name'
+                value={filter}
+                onChange={handleFilterChange}
+                isDisabled={contacts.length === 0} />
+        {contacts.length > 0 ? <ContactList contacts={getFilteredContactsByName()}
+                                            onDelete={handleContactDeleteById} /> :
+          <p>Please, add a contact to get started.</p>}
+      </Section>
+    </Wrapper>
+    <Toaster position='top-right' />
+    <GlobalStyles />
+  </>);
 }
-
-export default App;
