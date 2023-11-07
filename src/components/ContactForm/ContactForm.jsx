@@ -33,8 +33,6 @@ export default function ContactForm({ onSubmit }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    console.log(event);
-
     const isSubmitSuccessful = onSubmit(Object.fromEntries(new FormData(event.target).entries()));
 
     if (isSubmitSuccessful) {
