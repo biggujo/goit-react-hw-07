@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { Wrapper } from './App.styled';
 import Section from '../Section';
@@ -6,56 +7,16 @@ import ContactForm from '../ContactForm';
 import Filter from '../Filter';
 import ContactList from '../ContactList';
 import GlobalStyles from '../GlobalStyles';
-import { nanoid } from 'nanoid';
-import { useLocalStorage } from '../../hooks';
-import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from '../../redux/slices/selectors';
+import { getContacts } from '../../redux/contacts/selectors';
 import {
-  addContact, deleteContactById,
-} from '../../redux/slices/contactsSlice';
-
-const LS_KEY = 'contacts';
+  addContact,
+} from '../../redux/contacts/contactsSlice';
+import { getFilter } from '../../redux/filter/selectors';
 
 export default function App() {
+  const filter = useSelector(getFilter);
   const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
-
-  const [, setContacts] = useLocalStorage(LS_KEY, [
-    {
-      id: 'id-1',
-      name: 'Rosie Simpson',
-      phone: '459-12-56',
-    },
-    {
-      id: 'id-2',
-      name: 'Hermione Kline',
-      phone: '443-89-12',
-    },
-    {
-      id: 'id-3',
-      name: 'Eden Clements',
-      phone: '645-17-79',
-    },
-    {
-      id: 'id-4',
-      name: 'Annie Copeland',
-      phone: '227-91-26',
-    },
-  ]);
-
-  const [filter, setFilter] = useState('');
-
-  const handleFilterChange = ({
-    currentTarget: {
-      value,
-    },
-  }) => {
-    setFilter(value);
-  };
-
-  const handleContactDeleteById = (id) => {
-    dispatch(deleteContactById(id));
-  };
 
   // Return true if success, otherwise return false
   const handleSubmit = (contact) => {
@@ -127,14 +88,6 @@ export default function App() {
     }
   };
 
-  const getFilteredContactsByName = () => {
-    const normalizedFilter = filter.toLowerCase();
-
-    return contacts.filter(({ name }) => {
-      return name.toLowerCase().includes(normalizedFilter);
-    });
-  };
-
   return (<>
     <Wrapper>
       <Section title='Phonebook'>
@@ -144,11 +97,8 @@ export default function App() {
       <Section title='Contacts'>
         <Filter label='Find contacts by name'
                 value={filter}
-                onChange={handleFilterChange}
                 isDisabled={contacts.length === 0} />
-        {contacts.length > 0 ?
-          <ContactList contacts={getFilteredContactsByName()}
-                       onDelete={handleContactDeleteById} /> :
+        {contacts.length > 0 ? <ContactList /> :
           <p>Please, add a contact to get started.</p>}
       </Section>
     </Wrapper>
