@@ -17,7 +17,7 @@ export default function App() {
   const filter = useSelector(getFilter);
   const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
-
+  
   // Return true if success, otherwise return false
   const handleSubmit = (contact) => {
     return pushContact(contact);
