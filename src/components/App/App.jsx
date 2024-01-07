@@ -8,11 +8,19 @@ import ContactList from '../ContactList';
 import GlobalStyles from '../GlobalStyles';
 import { nanoid } from 'nanoid';
 import { useLocalStorage } from '../../hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from '../../redux/slices/selectors';
+import {
+  addContact, deleteContactById,
+} from '../../redux/slices/contactsSlice';
 
 const LS_KEY = 'contacts';
 
 export default function App() {
-  const [contacts, setContacts] = useLocalStorage(LS_KEY, [
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+
+  const [, setContacts] = useLocalStorage(LS_KEY, [
     {
       id: 'id-1',
       name: 'Rosie Simpson',
@@ -38,22 +46,20 @@ export default function App() {
   const [filter, setFilter] = useState('');
 
   const handleFilterChange = ({
-                                currentTarget: {
-                                  value,
-                                },
-                              }) => {
+    currentTarget: {
+      value,
+    },
+  }) => {
     setFilter(value);
   };
 
   const handleContactDeleteById = (id) => {
-    setContacts(prevState => prevState.filter(({ id: contactId }) => {
-      return contactId !== id;
-    }));
+    dispatch(deleteContactById(id));
   };
 
   // Return true if success, otherwise return false
   const handleSubmit = (contact) => {
-    return addContact(contact);
+    return pushContact(contact);
   };
 
   /**
@@ -67,10 +73,10 @@ export default function App() {
    *
    * RegExp rules: 0-9, +, ', -
    */
-  const addContact = ({
-                        name,
-                        phone,
-                      }) => {
+  const pushContact = ({
+    name,
+    phone,
+  }) => {
     if (!isNameValid()) {
       return false;
     }
@@ -80,14 +86,10 @@ export default function App() {
     }
 
     // Add a non-empty unique contact
-    setContacts(prevState => [
-      {
-        id: nanoid(),
-        name,
-        phone,
-      },
-      ...prevState,
-    ]);
+    dispatch(addContact({
+      name,
+      phone,
+    }));
 
     return true;
 
@@ -144,8 +146,9 @@ export default function App() {
                 value={filter}
                 onChange={handleFilterChange}
                 isDisabled={contacts.length === 0} />
-        {contacts.length > 0 ? <ContactList contacts={getFilteredContactsByName()}
-                                            onDelete={handleContactDeleteById} /> :
+        {contacts.length > 0 ?
+          <ContactList contacts={getFilteredContactsByName()}
+                       onDelete={handleContactDeleteById} /> :
           <p>Please, add a contact to get started.</p>}
       </Section>
     </Wrapper>
