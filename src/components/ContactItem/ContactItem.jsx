@@ -9,7 +9,7 @@ export default function ContactItem({
   onDelete,
 }) {
   return (<div>
-    <p>{fullName}: {phone} <Button type='button'
+    <p>{fullName}: {phone} <Button type="button"
                                    onClick={() => onDelete(id)}>Delete</Button>
     </p>
 
