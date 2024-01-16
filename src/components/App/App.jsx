@@ -19,7 +19,7 @@ export default function App() {
 
   useEffect(() => {
     dispatch(fetchContactsThunk());
-  }, []);
+  }, [dispatch]);
 
   return (<>
     <Wrapper>

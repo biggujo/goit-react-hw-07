@@ -23,8 +23,10 @@ const deleteContactById = async (id) => {
   return response.data;
 };
 
-export default {
+const api = {
   fetchContacts,
   addContact,
   deleteContactById,
 };
+
+export default api;
