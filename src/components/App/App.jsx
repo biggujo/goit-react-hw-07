@@ -5,6 +5,7 @@ import { Wrapper } from './App.styled';
 import Section from '../Section';
 import ContactForm from '../ContactForm';
 import Filter from '../Filter';
+import Text from '../Text/Text';
 import ContactList from '../ContactList';
 import GlobalStyles from '../GlobalStyles';
 import { selectContactsLength } from '../../redux/contacts';
@@ -26,6 +27,7 @@ export default function App() {
         <ContactForm />
       </Section>
       <Section title="Contacts">
+        <Text>Total amount: {contactsLength}</Text>
         <Filter label="Find contacts by name"
                 value={filter}
                 isDisabled={contactsLength === 0} />

@@ -1,4 +1,5 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import ContactItem from '../ContactItem';
 import {
@@ -22,7 +23,7 @@ export default function ContactList() {
   }
 
   if (status === Status.REJECTED) {
-    return <p>Error: {error}</p>;
+    return <p>Error: {error}. Try to reload the page.</p>;
   }
 
   if (status === Status.FULFILLED && contactsLength === 0) {
@@ -30,6 +31,10 @@ export default function ContactList() {
   }
 
   if (status === Status.FULFILLED) {
+    if (visibleContacts.length === 0) {
+      return <p>No contacts with such name have been found.</p>;
+    }
+
     return (<ul>
       {visibleContacts.map(({
         id,
@@ -39,7 +44,13 @@ export default function ContactList() {
         <ContactItem id={id}
                      fullName={name}
                      phone={phone}
-                     onDelete={() => dispatch(deleteContactByIdThunk(id))}
+                     onDelete={() => {
+                       dispatch(deleteContactByIdThunk(id))
+                       .unwrap()
+                       .then(() => {
+                         toast.success(`A contact "${name}" has been deleted`);
+                       });
+                     }}
         />
       </li>)}
     </ul>);

@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 import { nanoid } from 'nanoid';
 import { Button, ContactFormStyled, Input, Label } from './ContactForm.styled';
-import { addContactThunk } from '../../redux/contacts';
 import { useValidateContact } from '../../hooks';
-import { useDispatch, useSelector } from 'react-redux';
+import { addContactThunk, selectStatus, Status } from '../../redux/contacts';
 import { selectContacts } from '../../redux/contacts';
 
 export default function ContactForm() {
@@ -11,6 +12,7 @@ export default function ContactForm() {
   const [phone, setPhone] = useState('');
 
   const contacts = useSelector(selectContacts);
+  const status = useSelector(selectStatus);
   const dispatch = useDispatch();
   const [validateName, validatePhone] = useValidateContact();
 
@@ -77,7 +79,14 @@ export default function ContactForm() {
     dispatch(addContactThunk({
       name,
       phone,
-    }));
+    }))
+    .unwrap()
+    .then(() => {
+      toast.success('A contact has been added');
+    })
+    .catch((reason) => {
+      toast.error(reason);
+    });
 
     return true;
   };
@@ -104,6 +113,7 @@ export default function ContactForm() {
            onChange={handleInputChange}
            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
            required />
-    <Button type="submit">Add contact</Button>
+    <Button type="submit"
+            disabled={status === Status.PENDING}>Add contact</Button>
   </ContactFormStyled>;
 }
