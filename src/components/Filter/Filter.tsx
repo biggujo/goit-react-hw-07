@@ -5,11 +5,17 @@ import PropTypes from 'prop-types';
 import { Input, Label, Wrapper } from './Filter.styled';
 import { setFilter } from '../../redux/filter';
 
+interface Props {
+  label: string,
+  value: string,
+  isDisabled: boolean
+}
+
 export default function Filter({
-  label,
-  value,
-  isDisabled,
-}) {
+                                 label,
+                                 value,
+                                 isDisabled,
+                               }: Props) {
   const dispatch = useDispatch();
 
   const filterInputId = nanoid();

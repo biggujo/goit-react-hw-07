@@ -76,6 +76,7 @@ export default function ContactForm() {
       return false;
     }
 
+    // @ts-ignore
     if (!validatePhone(contact.phone)) {
       return false;
     }

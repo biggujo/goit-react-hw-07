@@ -1,6 +1,7 @@
 import toast from 'react-hot-toast';
+import { Contact } from '../interfaces';
 
-const validateName = (name, contacts) => {
+const validateName = (name: string, contacts: Array<Contact>): boolean => {
   if (!name) {
     toast.error('Provide a name');
     return false;
@@ -14,15 +15,15 @@ const validateName = (name, contacts) => {
   return true;
 };
 
-const validatePhone = (phone) => {
+const validatePhone = (phone: string): boolean => {
   if (!phone) {
     toast.error('Provide a phone');
     return false;
   }
 
-  const regExp = new RegExp('^[0-9 -\'+]+$');
+  const regExp: RegExp = new RegExp('^[0-9 -\'+]+$');
 
-  const isPhoneAValidNumber = regExp.test(phone);
+  const isPhoneAValidNumber: boolean = regExp.test(phone);
 
   if (!isPhoneAValidNumber) {
     toast.error(
