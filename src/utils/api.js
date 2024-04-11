@@ -18,7 +18,7 @@ const addContact = async ({
   return response.data;
 };
 
-const deleteContactById = async (id) => {
+const deleteContact = async (id) => {
   const response = await axios.delete(`/contacts/${id}`);
   return response.data;
 };
@@ -26,7 +26,7 @@ const deleteContactById = async (id) => {
 const api = {
   fetchContacts,
   addContact,
-  deleteContactById,
+  deleteContact,
 };
 
 export default api;

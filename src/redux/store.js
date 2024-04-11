@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { contactsReducer } from './contacts';
-import { filterReducer } from './filter';
+import { contactsReducer } from './contactsSlice.js';
+import { filterReducer } from './filtersSlice.js';
 
 export const store = configureStore({
   reducer: {
@@ -8,3 +8,6 @@ export const store = configureStore({
     filter: filterReducer,
   },
 });
+
+export class persistor {
+}

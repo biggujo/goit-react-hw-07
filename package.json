@@ -13,14 +13,16 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@reduxjs/toolkit": "^2.0.1",
+    "axios": "^1.6.8",
+    "formik": "^2.4.5",
+    "modern-normalize": "^2.0.0",
+    "nanoid": "^4.0.2",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "axios": "^1.6.5",
-    "modern-normalize": "^2.0.0",
-    "nanoid": "^5.0.4",
-    "prop-types": "^15.8.1",
     "react-hot-toast": "^2.4.1",
-    "react-redux": "^9.0.4"
+    "react-redux": "^9.0.4",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
