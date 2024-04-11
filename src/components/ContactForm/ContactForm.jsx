@@ -1,37 +1,30 @@
-import React, { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { nanoid } from 'nanoid';
 import { Button, ContactFormStyled, Input, Label } from './ContactForm.styled';
 import { useValidateContact } from '../../hooks';
-import { addContactThunk, selectStatus } from '../../redux/contacts';
+import { addContactThunk, selectStatus, Status } from '../../redux/contacts';
 import { selectContacts } from '../../redux/contacts';
-import { Contact } from '../../interfaces';
-import { Status } from '../../utils';
-
 
 export default function ContactForm() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
 
-  const contacts: Array<Contact> = useSelector(selectContacts);
-  const status: string = useSelector(selectStatus);
+  const contacts = useSelector(selectContacts);
+  const status = useSelector(selectStatus);
   const dispatch = useDispatch();
   const [validateName, validatePhone] = useValidateContact();
 
   const nameInputId = useRef(nanoid());
   const phoneInputId = useRef(nanoid());
 
-  // const handleInputChange = ({
-  //                              currentTarget: {
-  //                                value,
-  //                                name,
-  //                              },
-  //                            }) => {
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { currentTarget } = event;
-    const { value, name }: { value: string, name: string } = currentTarget;
-
+  const handleInputChange = ({
+    currentTarget: {
+      value,
+      name,
+    },
+  }) => {
     switch (name) {
       case 'name':
         setName(value);
@@ -46,14 +39,13 @@ export default function ContactForm() {
     }
   };
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     // name, phone
-    const entries: Record<string, FormDataEntryValue> =
-      Object.fromEntries(new FormData(event.target as HTMLFormElement).entries());
+    const entries = Object.fromEntries(new FormData(event.target).entries());
 
-    const isSubmitSuccessful = pushContact(entries as unknown as Contact);
+    const isSubmitSuccessful = pushContact(entries);
 
     if (isSubmitSuccessful) {
       resetFormInfo();
@@ -71,13 +63,15 @@ export default function ContactForm() {
    *
    * RegExp rules: 0-9, +, ', -
    */
-  const pushContact = (contact: Contact) => {
-    if (!validateName(contact.name, contacts)) {
+  const pushContact = ({
+    name,
+    phone,
+  }) => {
+    if (!validateName(name, contacts)) {
       return false;
     }
 
-    // @ts-ignore
-    if (!validatePhone(contact.phone)) {
+    if (!validatePhone(phone)) {
       return false;
     }
 
@@ -86,13 +80,13 @@ export default function ContactForm() {
       name,
       phone,
     }))
-      .unwrap()
-      .then(() => {
-        toast.success('A contact has been added');
-      })
-      .catch((reason: string) => {
-        toast.error(reason);
-      });
+    .unwrap()
+    .then(() => {
+      toast.success('A contact has been added');
+    })
+    .catch((reason) => {
+      toast.error(reason);
+    });
 
     return true;
   };

@@ -9,8 +9,7 @@ import {
   selectStatus,
   selectVisibleContacts,
 } from '../../redux/contacts';
-import { Status } from '../../utils';
-import { Contact } from '../../interfaces';
+import { Status } from '../../redux/contacts';
 
 export default function ContactList() {
   const visibleContacts = useSelector(selectVisibleContacts);
@@ -38,19 +37,19 @@ export default function ContactList() {
 
     return (<ul>
       {visibleContacts.map(({
-                              id,
-                              name,
-                              phone,
-                            }: Contact & { id: string }) => <li key={id}>
+        id,
+        name,
+        phone,
+      }) => <li key={id}>
         <ContactItem id={id}
                      fullName={name}
                      phone={phone}
                      onDelete={() => {
                        dispatch(deleteContactByIdThunk(id))
-                         .unwrap()
-                         .then(() => {
-                           toast.success(`A contact "${name}" has been deleted`);
-                         });
+                       .unwrap()
+                       .then(() => {
+                         toast.success(`A contact "${name}" has been deleted`);
+                       });
                      }}
         />
       </li>)}
