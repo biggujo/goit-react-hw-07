@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Button } from './Contact.styled';
 import { useDispatch } from 'react-redux';
-import { deleteContact } from '../../redux/contactsSlice.js';
+import { deleteContact } from '../../redux/contactsOps.js';
 
 export default function Contact({
   id,
@@ -11,7 +11,7 @@ export default function Contact({
   const dispatch = useDispatch();
 
   return (<div>
-    <p>{fullName}: {number} <Button type='button'
+    <p>{fullName}: {number} <Button type="button"
                                     onClick={() => dispatch(deleteContact(id))}>Delete</Button>
     </p>
 

@@ -8,6 +8,3 @@ export const store = configureStore({
     filter: filterReducer,
   },
 });
-
-export class persistor {
-}

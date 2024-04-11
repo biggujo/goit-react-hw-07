@@ -1,8 +1,23 @@
-import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { nanoid } from 'nanoid';
-import { fetchContacts } from './contactsOps.js';
+import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { addContact, deleteContact, fetchContacts } from './contactsOps.js';
+import { selectNameFilter } from './filtersSlice.js';
 
 export const selectContacts = (state) => state.contacts.items;
+
+export const selectLoading = (state) => state.contacts.loading;
+
+export const selectError = (state) => state.contacts.error;
+
+export const selectFilteredContacts = createSelector([
+  selectContacts,
+  selectNameFilter,
+], (contacts, filter) => {
+  const normalizedFilter = filter.toLowerCase();
+
+  return contacts.filter(({ name }) => {
+    return name.toLowerCase().includes(normalizedFilter);
+  });
+});
 
 const initialState = {
   items: [],
@@ -12,7 +27,6 @@ const initialState = {
 
 const handlePending = (state) => ({
   ...state,
-  items: [],
   loading: true,
   error: null,
 });
@@ -38,11 +52,13 @@ const handleAddContactFulfilled = (state, action) => ({
   loading: false,
 });
 
-const handleDeleteContactFulfilled = (state, action) => ({
-  ...state,
-  items: state.items.filter(({ id }) => id !== action.payload),
-  loading: false,
-});
+const handleDeleteContactFulfilled = (state, action) => {
+  return ({
+    ...state,
+    items: state.items.filter(({ id }) => id !== action.payload.id),
+    loading: false,
+  });
+};
 
 const slice = createSlice({
   name: 'contacts',
@@ -69,8 +85,4 @@ const slice = createSlice({
   },
 });
 
-export const {
-  addContact,
-  deleteContact,
-} = slice.actions;
 export const contactsReducer = slice.reducer;

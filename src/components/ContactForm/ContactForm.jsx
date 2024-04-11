@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {
   Button, ContactFormStyled, ErrorMessageStyled, Input, Label,
 } from './ContactForm.styled';
-import { addContact } from '../../redux/contactsSlice.js';
+import { addContact } from '../../redux/contactsOps.js';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().min(3).max(50).required(),
@@ -33,29 +33,26 @@ export default function ContactForm() {
       <div>
         <Label>
           Name
-          <Input type='text'
-                 name='name'
+          <Input type="text"
+                 name="name"
                  value={formik.values.name}
                  onChange={formik.handleChange} />
         </Label>
-        <ErrorMessage name='name' component={ErrorMessageStyled} />
+        <ErrorMessage name="name" component={ErrorMessageStyled} />
       </div>
 
       <div>
         <Label>
           Phone
-          <Input type='tel'
-                 name='number'
+          <Input type="tel"
+                 name="number"
                  value={formik.values.number}
                  onChange={formik.handleChange} />
         </Label>
-        <ErrorMessage name='number' component={ErrorMessageStyled} />
+        <ErrorMessage name="number" component={ErrorMessageStyled} />
       </div>
 
-      <Button type='submit'>Add contact</Button>
+      <Button type="submit">Add contact</Button>
     </ContactFormStyled>
   </FormikProvider>;
 }
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
