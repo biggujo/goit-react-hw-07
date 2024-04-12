@@ -25,39 +25,29 @@ const initialState = {
   error: null,
 };
 
-const handlePending = (state) => ({
-  ...state,
-  loading: true,
-  error: null,
-});
+const handlePending = (state) => {
+  state.loading = true;
+  state.error = null;
+};
 
-const handleRejected = (state, action) => ({
-  ...state,
-  loading: false,
-  error: action.payload,
-});
+const handleRejected = (state, action) => {
+  state.loading = false;
+  state.error = action.payload;
+};
 
-const handleFetchContactsFulfilled = (state, action) => ({
-  ...state,
-  items: action.payload,
-  loading: false,
-});
+const handleFetchContactsFulfilled = (state, action) => {
+  state.items = action.payload;
+  state.loading = false;
+};
 
-const handleAddContactFulfilled = (state, action) => ({
-  ...state,
-  items: [
-    ...state.items,
-    action.payload,
-  ],
-  loading: false,
-});
+const handleAddContactFulfilled = (state, action) => {
+  state.items.push(action.payload);
+  state.loading = false;
+};
 
 const handleDeleteContactFulfilled = (state, action) => {
-  return ({
-    ...state,
-    items: state.items.filter(({ id }) => id !== action.payload.id),
-    loading: false,
-  });
+  state.items = state.items.filter(({ id }) => id !== action.payload.id);
+  state.loading = false;
 };
 
 const slice = createSlice({

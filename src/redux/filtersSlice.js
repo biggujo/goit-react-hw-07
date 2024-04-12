@@ -11,9 +11,9 @@ const slice = createSlice({
   initialState,
   reducers: {
     changeFilter: {
-      reducer: (state, action) => ({
-        name: action.payload.value,
-      }),
+      reducer: (state, action) => {
+        state.name = action.payload.value;
+      },
       prepare: (value) => ({
         payload: {
           value,
