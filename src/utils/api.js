@@ -9,11 +9,11 @@ const fetchContacts = async () => {
 
 const addContact = async ({
   name,
-  phone,
+  number,
 }) => {
   const response = await axios.post('/contacts', {
     name,
-    phone,
+    number,
   });
   return response.data;
 };
